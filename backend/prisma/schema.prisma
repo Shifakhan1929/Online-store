@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  PLACED
+  SHIPPED
+  DELIVERED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FLAT
+}
+
+model User {
+  id           String     @id @default(uuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         Role       @default(CUSTOMER)
+  cartItems    CartItem[]
+  orders       Order[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([email])
+}
+
+model Product {
+  id            String      @id @default(uuid())
+  name          String
+  description   String?     @db.Text
+  category      String
+  price         Int // Stored as integer paise (e.g., ₹100.50 = 10050 paise)
+  stockQuantity Int         @default(0)
+  imageUrl      String?
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([category])
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+}
+
+model Coupon {
+  id            String       @id @default(uuid())
+  code          String       @unique
+  discountType  DiscountType
+  discountValue Int // Percentage (e.g. 10 for 10%) or Flat value in paise (e.g. 5000 for ₹50)
+  minOrderValue Int          @default(0) // Minimum order value in paise
+  expiryDate    DateTime
+  isActive      Boolean      @default(true)
+  orders        Order[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([code])
+}
+
+model Order {
+  id                    String        @id @default(uuid())
+  userId                String
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status                OrderStatus   @default(PLACED)
+  subtotal              Int // Subtotal in paise
+  discountAmount        Int           @default(0) // Discount amount in paise
+  totalAmount           Int // Total amount in paise
+  couponId              String?
+  coupon                Coupon?       @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  couponCodeSnapshot    String? // Snapshot of coupon code at the time of order
+  discountTypeSnapshot  DiscountType? // Snapshot of coupon discount type
+  discountValueSnapshot Int? // Snapshot of coupon discount value
+  items                 OrderItem[]
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([couponId])
+}
+
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productName String // Snapshot of product name at purchase
+  unitPrice   Int // Snapshot of unit price in paise at purchase
+  quantity    Int
+  lineTotal   Int // Line total in paise (unitPrice * quantity)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([productId])
+}
