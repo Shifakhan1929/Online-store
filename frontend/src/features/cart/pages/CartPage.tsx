@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { fetchCart, updateCartItemQuantity, removeCartItem, clearCart } from '../api/cartApi.ts';
+import { useCart } from '../context/useCart.ts';
 import CartItemRow from '../components/CartItemRow.tsx';
 import CartSummary from '../components/CartSummary.tsx';
 import type { Cart } from '../../../types/index.ts';
 
 export default function CartPage() {
   const navigate = useNavigate();
+  const { setCartCount } = useCart();
 
   const [cart, setCart] = useState<Cart>({
     items: [],
@@ -38,6 +40,7 @@ export default function CartPage() {
         const data = await fetchCart();
         if (isMounted && currentSeq === requestSeqRef.current) {
           setCart(data);
+          setCartCount(data.totalQuantity);
           setErrorMessage(null);
           setIsLoading(false);
         }
@@ -55,7 +58,7 @@ export default function CartPage() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [setCartCount]);
 
   const handleRetry = () => {
     setIsLoading(true);
@@ -66,6 +69,7 @@ export default function CartPage() {
       .then((data) => {
         if (currentSeq === requestSeqRef.current) {
           setCart(data);
+          setCartCount(data.totalQuantity);
           setIsLoading(false);
         }
       })
@@ -89,6 +93,7 @@ export default function CartPage() {
       const result = await updateCartItemQuantity(itemId, newQuantity);
       if (currentSeq === requestSeqRef.current) {
         setCart(result.cart);
+        setCartCount(result.cart.totalQuantity);
       }
     } catch (err: unknown) {
       if (currentSeq === requestSeqRef.current) {
@@ -99,6 +104,7 @@ export default function CartPage() {
           const synced = await fetchCart();
           if (currentSeq === requestSeqRef.current) {
             setCart(synced);
+            setCartCount(synced.totalQuantity);
           }
         } catch {
           // ignore secondary fetch error
@@ -121,6 +127,7 @@ export default function CartPage() {
       const result = await removeCartItem(itemId);
       if (currentSeq === requestSeqRef.current) {
         setCart(result.cart);
+        setCartCount(result.cart.totalQuantity);
         setFeedbackMessage('Item removed from cart');
         setTimeout(() => setFeedbackMessage(null), 3000);
       }
@@ -147,6 +154,7 @@ export default function CartPage() {
       const result = await clearCart();
       if (currentSeq === requestSeqRef.current) {
         setCart(result.cart);
+        setCartCount(0);
         setFeedbackMessage('Shopping cart cleared');
         setTimeout(() => setFeedbackMessage(null), 3000);
       }

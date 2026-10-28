@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchCart } from '../../cart/api/cartApi.ts';
+import { useCart } from '../../cart/context/useCart.ts';
 import { submitCheckout } from '../api/checkoutApi.ts';
 import CheckoutItemRow from '../components/CheckoutItemRow.tsx';
 import CouponSection from '../components/CouponSection.tsx';
@@ -9,6 +10,7 @@ import type { Cart } from '../../../types/index.ts';
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
+  const { setCartCount } = useCart();
   const [cart, setCart] = useState<Cart | null>(null);
   const [isLoadingCart, setIsLoadingCart] = useState<boolean>(true);
   const [cartError, setCartError] = useState<string | null>(null);
@@ -33,6 +35,7 @@ export default function CheckoutPage() {
         const cartData = await fetchCart();
         if (isMounted) {
           setCart(cartData);
+          setCartCount(cartData.totalQuantity);
           setCartError(null);
           setIsLoadingCart(false);
         }
@@ -50,7 +53,7 @@ export default function CheckoutPage() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [setCartCount]);
 
   const handleApplyCoupon = (code: string) => {
     setCouponError(null);
@@ -84,6 +87,9 @@ export default function CheckoutPage() {
       const order = await submitCheckout({
         couponCode: stagedCoupon || undefined,
       });
+
+      // Synchronize cart count: backend transactionally empties cart upon successful checkout
+      setCartCount(0);
 
       // Order placement succeeded: navigate to order details page
       navigate(`/orders/${order.id}`, { replace: true, state: { justPlaced: true } });

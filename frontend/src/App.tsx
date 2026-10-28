@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './features/auth/context/AuthContext.tsx';
+import { CartProvider } from './features/cart/context/CartContext.tsx';
 import ProtectedRoute from './features/auth/components/ProtectedRoute.tsx';
 import RootLayout from './layouts/RootLayout.tsx';
 import LoginPage from './features/auth/pages/LoginPage.tsx';
@@ -17,7 +18,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
+        <CartProvider>
+          <Routes>
           <Route path="/" element={<RootLayout />}>
             <Route index element={<Navigate to="/products" replace />} />
             <Route path="products" element={<ProductsPage />} />
@@ -70,7 +72,8 @@ export default function App() {
             <Route path="*" element={<Navigate to="/products" replace />} />
           </Route>
         </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+      </CartProvider>
+    </AuthProvider>
+  </BrowserRouter>
   );
 }

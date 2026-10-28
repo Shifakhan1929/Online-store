@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../auth/context/useAuth.ts';
+import { useCart } from '../../cart/context/useCart.ts';
 import { fetchProducts } from '../api/productsApi.ts';
 import { addItemToCart } from '../../cart/api/cartApi.ts';
 import ProductCard from '../components/ProductCard.tsx';
@@ -13,6 +14,7 @@ export default function ProductsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated } = useAuth();
+  const { setCartCount } = useCart();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [pagination, setPagination] = useState<Pagination>({
@@ -184,7 +186,8 @@ export default function ProductsPage() {
     setCartSuccessFeedback(null);
 
     try {
-      await addItemToCart(product.id, 1);
+      const result = await addItemToCart(product.id, 1);
+      setCartCount(result.cart.totalQuantity);
       setRecentlyAddedId(product.id);
       setCartSuccessFeedback(`"${product.name}" added to cart!`);
 
