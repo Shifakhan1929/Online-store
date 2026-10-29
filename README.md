@@ -378,7 +378,7 @@ npm --prefix frontend run build
 
 ## AI Tools Used & Assisted Scope
 
-- **Tool**: Antigravity (Google DeepMind agentic coding assistant).
+- **AI Tool**: Antigravity, Claude, chatgpt.
 - **Assisted Scope**:
   - Full-stack architecture design, folder organization, and environment configuration.
   - PostgreSQL schema design with Prisma 7, schema migrations, and idempotent database seed scripts.
