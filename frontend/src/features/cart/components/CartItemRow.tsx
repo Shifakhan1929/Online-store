@@ -34,18 +34,20 @@ export default function CartItemRow({
 
   return (
     <div
-      className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 py-4 transition-opacity dark:border-gray-800 ${
-        isRemoving ? 'opacity-40' : 'opacity-100'
+      className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-gray-200/90 bg-white p-4 shadow-xs transition-all duration-200 dark:border-gray-800 dark:bg-gray-900 ${
+        isRemoving ? 'opacity-40 scale-[0.99]' : 'opacity-100 hover:border-gray-300 dark:hover:border-gray-700'
       }`}
     >
       {/* Product Image and Details */}
       <div className="flex items-center gap-4 min-w-0 flex-1">
-        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-gray-800">
+        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-gray-100 bg-gray-50 dark:border-gray-800 dark:bg-gray-800/80">
           {item.imageUrl && !imageFailed ? (
             <img
               src={item.imageUrl}
               alt={item.name}
               onError={() => setImageFailed(true)}
+              width={80}
+              height={80}
               className="h-full w-full object-cover object-center"
             />
           ) : (
@@ -68,101 +70,87 @@ export default function CartItemRow({
         </div>
 
         <div className="min-w-0 flex-1">
-          <h4 className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+          <h4 className="truncate text-sm font-bold text-gray-900 dark:text-white">
             {item.name}
           </h4>
           <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
-            Unit Price: <span className="font-medium text-gray-700 dark:text-gray-300">₹{priceInRupees}</span>
+            Unit Price: <span className="font-semibold text-gray-800 dark:text-gray-200">₹{priceInRupees}</span>
           </p>
           {isMaxStockReached ? (
-            <span className="mt-1 inline-block rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:bg-amber-950/50 dark:text-amber-400">
+            <span className="mt-1.5 inline-block rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:bg-amber-950/60 dark:text-amber-400">
               Max available stock ({item.stockQuantity}) reached
             </span>
           ) : (
-            <span className="mt-1 inline-block text-[11px] text-gray-500 dark:text-gray-400">
-              Available: {item.stockQuantity} in stock
+            <span className="mt-1.5 inline-block text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+              &bull; In Stock
             </span>
           )}
         </div>
       </div>
 
-      {/* Quantity Stepper and Subtotal Controls */}
-      <div className="flex items-center justify-between sm:justify-end gap-6 sm:gap-8">
+      {/* Stepper Controls & Line Subtotal */}
+      <div className="flex items-center justify-between sm:justify-end gap-6 border-t border-gray-100 pt-3 sm:border-t-0 sm:pt-0 dark:border-gray-800">
         {/* Quantity Controls */}
-        <div className="flex flex-col items-center gap-1">
-          <div className="flex items-center rounded-lg border border-gray-300 bg-white shadow-xs dark:border-gray-700 dark:bg-gray-800">
-            <button
-              type="button"
-              aria-label={`Decrease quantity of ${item.name}`}
-              onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-              disabled={isMinQuantity || isBusy}
-              className="flex h-8 w-8 items-center justify-center rounded-l-lg text-gray-600 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-30 dark:text-gray-300 dark:hover:bg-gray-700"
-            >
-              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
-              </svg>
-            </button>
+        <div className="flex items-center rounded-xl border border-gray-200 bg-gray-50/80 p-1 shadow-xs dark:border-gray-700 dark:bg-gray-800">
+          <button
+            type="button"
+            onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+            disabled={isMinQuantity || isBusy}
+            aria-label={`Decrease quantity of ${item.name}`}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-white hover:text-gray-900 hover:shadow-xs disabled:cursor-not-allowed disabled:opacity-40 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
+            </svg>
+          </button>
 
-            <span className="flex h-8 min-w-10 items-center justify-center px-2 text-xs font-semibold text-gray-900 dark:text-white">
-              {isUpdating ? (
-                <svg className="h-3.5 w-3.5 animate-spin text-indigo-600 dark:text-indigo-400" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                </svg>
-              ) : (
-                item.quantity
-              )}
-            </span>
+          <span
+            className="w-10 text-center text-xs font-bold text-gray-900 dark:text-white"
+            aria-live="polite"
+          >
+            {isUpdating ? (
+              <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent dark:border-indigo-400" />
+            ) : (
+              item.quantity
+            )}
+          </span>
 
-            <button
-              type="button"
-              aria-label={`Increase quantity of ${item.name}`}
-              onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-              disabled={isMaxStockReached || isBusy}
-              className="flex h-8 w-8 items-center justify-center rounded-r-lg text-gray-600 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-30 dark:text-gray-300 dark:hover:bg-gray-700"
-            >
-              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-              </svg>
-            </button>
+          <button
+            type="button"
+            onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+            disabled={isMaxStockReached || isBusy}
+            aria-label={`Increase quantity of ${item.name}`}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-white hover:text-gray-900 hover:shadow-xs disabled:cursor-not-allowed disabled:opacity-40 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Line Subtotal */}
+        <div className="w-24 text-right">
+          <div className="text-[11px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+            Subtotal
+          </div>
+          <div className="text-sm font-extrabold text-gray-900 dark:text-white">
+            ₹{subtotalInRupees}
           </div>
         </div>
 
-        {/* Item Subtotal */}
-        <div className="w-24 text-right">
-          <span className="block text-xs text-gray-500 dark:text-gray-400 sm:hidden">Subtotal</span>
-          <span className="text-sm font-bold text-gray-900 dark:text-white">
-            ₹{subtotalInRupees}
-          </span>
-        </div>
-
         {/* Remove Button */}
-        <div>
-          <button
-            type="button"
-            aria-label={`Remove ${item.name} from cart`}
-            onClick={() => onRemove(item.id)}
-            disabled={isBusy}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40 dark:text-gray-500 dark:hover:bg-red-950/40 dark:hover:text-red-400"
-          >
-            {isRemoving ? (
-              <svg className="h-4 w-4 animate-spin text-red-500" viewBox="0 0 24 24" fill="none">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-              </svg>
-            ) : (
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-              </svg>
-            )}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => onRemove(item.id)}
+          disabled={isBusy}
+          aria-label={`Remove ${item.name} from cart`}
+          className="flex h-9 w-9 items-center justify-center rounded-xl text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/20 disabled:cursor-not-allowed disabled:opacity-40 dark:text-gray-500 dark:hover:bg-red-950/60 dark:hover:text-red-400"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
       </div>
     </div>
   );
 }
-

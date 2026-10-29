@@ -315,26 +315,17 @@ export default function CartPage() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* Cart Items List */}
           <div className="lg:col-span-8">
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs dark:border-gray-800 dark:bg-gray-900">
-              <div className="hidden border-b border-gray-200 pb-3 text-xs font-semibold text-gray-500 sm:flex sm:justify-between dark:border-gray-800 dark:text-gray-400">
-                <span className="flex-1">Product</span>
-                <span className="w-28 text-center">Quantity</span>
-                <span className="w-24 text-right">Subtotal</span>
-                <span className="w-8 text-right"></span>
-              </div>
-
-              <div className="divide-y divide-gray-100 dark:divide-gray-800/60">
-                {cart.items.map((item) => (
-                  <CartItemRow
-                    key={item.id}
-                    item={item}
-                    onUpdateQuantity={handleUpdateQuantity}
-                    onRemove={handleRemoveItem}
-                    isUpdating={updatingItemId === item.id}
-                    isRemoving={removingItemId === item.id}
-                  />
-                ))}
-              </div>
+            <div className="space-y-3.5">
+              {cart.items.map((item) => (
+                <CartItemRow
+                  key={item.id}
+                  item={item}
+                  onUpdateQuantity={handleUpdateQuantity}
+                  onRemove={handleRemoveItem}
+                  isUpdating={updatingItemId === item.id}
+                  isRemoving={removingItemId === item.id}
+                />
+              ))}
             </div>
           </div>
 

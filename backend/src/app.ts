@@ -6,7 +6,18 @@ import { errorHandler } from './middlewares/errorHandler.js';
 
 const app = express();
 
-app.use(cors());
+const corsOrigin = process.env.CORS_ORIGIN;
+const corsOptions =
+  corsOrigin && corsOrigin !== '*'
+    ? {
+        origin: corsOrigin.includes(',')
+          ? corsOrigin.split(',').map((origin) => origin.trim())
+          : corsOrigin.trim(),
+        credentials: true,
+      }
+    : undefined;
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // API Routes

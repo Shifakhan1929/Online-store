@@ -63,19 +63,19 @@ export default function OrdersPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl dark:text-white">
-            My Orders
+          <h1 className="text-2xl font-black tracking-tight text-gray-900 sm:text-3xl dark:text-white">
+            Customer Order History
           </h1>
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            Track, review, and view detailed receipts for your past purchases.
+            Track fulfillment, review purchases, and inspect itemized receipts.
           </p>
         </div>
 
         <Link
           to="/products"
-          className="text-xs font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
+          className="text-xs font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
         >
           &larr; Browse Catalogue
         </Link>
@@ -87,13 +87,13 @@ export default function OrdersPage() {
           {Array.from({ length: 3 }).map((_, idx) => (
             <div
               key={idx}
-              className="h-32 animate-pulse rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900"
+              className="h-32 rounded-2xl border border-gray-200/80 bg-white p-5 animate-shimmer dark:border-gray-800 dark:bg-gray-900"
             />
           ))}
         </div>
       ) : errorMessage ? (
-        <div className="my-12 flex flex-col items-center justify-center rounded-2xl border border-red-200 bg-red-50/50 p-8 text-center dark:border-red-900/50 dark:bg-red-950/20">
-          <div className="mb-3 rounded-full bg-red-100 p-3 text-red-600 dark:bg-red-950/70 dark:text-red-400">
+        <div className="my-12 flex flex-col items-center justify-center rounded-3xl border border-red-200 bg-red-50/50 p-10 text-center dark:border-red-900/50 dark:bg-red-950/20">
+          <div className="mb-3.5 rounded-2xl bg-red-100 p-3 text-red-600 dark:bg-red-950/70 dark:text-red-400">
             <svg
               className="h-6 w-6"
               fill="none"
@@ -108,29 +108,28 @@ export default function OrdersPage() {
               />
             </svg>
           </div>
-          <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+          <h2 className="text-base font-bold text-gray-900 dark:text-white">
             Unable to Load Orders
           </h2>
-          <p className="mt-1 max-w-sm text-xs text-gray-600 dark:text-gray-400">
+          <p className="mt-1.5 max-w-sm text-xs text-gray-600 dark:text-gray-400">
             {errorMessage}
           </p>
           <button
             type="button"
             onClick={handleRetry}
-            className="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-indigo-700 focus:outline-none"
+            className="mt-5 rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-indigo-700"
           >
             Try Again
           </button>
         </div>
       ) : orders.length === 0 ? (
-        <div className="my-12 flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 p-12 text-center dark:border-gray-700">
-          <div className="mb-4 rounded-full bg-indigo-50 p-4 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400">
+        <div className="my-12 flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-200 p-12 text-center dark:border-gray-800">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400">
             <svg
-              className="h-10 w-10"
+              className="h-8 w-8 stroke-[1.5]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth={1.5}
             >
               <path
                 strokeLinecap="round"
@@ -142,21 +141,21 @@ export default function OrdersPage() {
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             No orders placed yet
           </h2>
-          <p className="mt-1 max-w-sm text-xs text-gray-500 dark:text-gray-400">
+          <p className="mt-1.5 max-w-sm text-xs text-gray-500 dark:text-gray-400">
             When you purchase items from our store, your order history and receipt details will appear here.
           </p>
           <Link
             to="/products"
-            className="mt-6 rounded-lg bg-indigo-600 px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+            className="mt-6 rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-indigo-700 hover:scale-105 active:scale-95 transition-all"
           >
             Explore Catalogue
           </Link>
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="text-xs text-gray-500 dark:text-gray-400">
-            Showing <span className="font-semibold text-gray-900 dark:text-gray-200">{orders.length}</span>{' '}
-            {orders.length === 1 ? 'order' : 'orders'}
+          <div className="text-xs font-medium text-gray-500 dark:text-gray-400">
+            Showing <span className="font-bold text-gray-900 dark:text-gray-100">{orders.length}</span>{' '}
+            {orders.length === 1 ? 'completed order' : 'completed orders'}
           </div>
 
           <div className="space-y-4">
@@ -167,9 +166,9 @@ export default function OrdersPage() {
 
           {/* Pagination controls if more than 1 page */}
           {totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-between border-t border-gray-200 pt-4 text-xs dark:border-gray-800">
-              <span className="text-gray-500 dark:text-gray-400">
-                Page {currentPage} of {totalPages}
+            <div className="mt-8 flex items-center justify-between border-t border-gray-200/80 pt-6 text-xs dark:border-gray-800">
+              <span className="text-gray-500 dark:text-gray-400 font-medium">
+                Page <span className="font-bold text-gray-900 dark:text-white">{currentPage}</span> of {totalPages}
               </span>
 
               <div className="flex items-center gap-2">
@@ -177,17 +176,17 @@ export default function OrdersPage() {
                   type="button"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage <= 1}
-                  className="rounded-lg border border-gray-300 px-3 py-1.5 font-semibold text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                  className="min-h-[38px] rounded-xl border border-gray-300 px-4 py-2 font-bold text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40 transition-colors dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                 >
-                  Previous
+                  &larr; Previous
                 </button>
                 <button
                   type="button"
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage >= totalPages}
-                  className="rounded-lg border border-gray-300 px-3 py-1.5 font-semibold text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+                  className="min-h-[38px] rounded-xl border border-gray-300 px-4 py-2 font-bold text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40 transition-colors dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
                 >
-                  Next
+                  Next &rarr;
                 </button>
               </div>
             </div>
@@ -197,4 +196,3 @@ export default function OrdersPage() {
     </div>
   );
 }
-

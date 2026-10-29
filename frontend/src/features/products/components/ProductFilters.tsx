@@ -72,12 +72,16 @@ export default function ProductFilters({
     });
   };
 
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
+  const handleCategorySelect = (category?: string) => {
     onChange({
-      category: value === '' ? undefined : value,
+      category,
       page: 1,
     });
+  };
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    handleCategorySelect(value === '' ? undefined : value);
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -96,23 +100,58 @@ export default function ProductFilters({
   );
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-xs dark:border-gray-800 dark:bg-gray-900">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="rounded-2xl border border-gray-200/90 bg-white p-5 shadow-xs dark:border-gray-800 dark:bg-gray-900 transition-colors">
+      {/* Category Pill Buttons */}
+      <div className="mb-5 flex flex-wrap items-center gap-2">
+        <span className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mr-1">
+          Categories:
+        </span>
+        <button
+          type="button"
+          onClick={() => handleCategorySelect(undefined)}
+          className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 active:scale-95 ${
+            !filters.category
+              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25 scale-[1.02]'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-[1.02] dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+          }`}
+        >
+          All
+        </button>
+        {allCategories.map((cat) => {
+          const isSelected = filters.category === cat;
+          return (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => handleCategorySelect(cat)}
+              className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 active:scale-95 ${
+                isSelected
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25 scale-[1.02]'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-[1.02] dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+              }`}
+            >
+              {cat}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between border-t border-gray-100 pt-4 dark:border-gray-800">
         {/* Left side: Category & Sort controls */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:items-center">
-          {/* Category Dropdown */}
-          <div className="flex flex-col gap-1 sm:w-48">
+          {/* Category Dropdown (for compact viewports) */}
+          <div className="flex flex-col gap-1 sm:w-48 lg:hidden">
             <label
               htmlFor="filter-category"
-              className="text-xs font-semibold text-gray-700 dark:text-gray-300"
+              className="text-xs font-bold text-gray-700 dark:text-gray-300"
             >
-              Category
+              Category Dropdown
             </label>
             <select
               id="filter-category"
               value={filters.category || ''}
               onChange={handleCategoryChange}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+              className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
             >
               <option value="">All Categories</option>
               {allCategories.map((cat) => (
@@ -124,10 +163,10 @@ export default function ProductFilters({
           </div>
 
           {/* Sort Selector */}
-          <div className="flex flex-col gap-1 sm:w-48">
+          <div className="flex flex-col gap-1 sm:w-52">
             <label
               htmlFor="filter-sort"
-              className="text-xs font-semibold text-gray-700 dark:text-gray-300"
+              className="text-xs font-bold text-gray-700 dark:text-gray-300"
             >
               Sort By
             </label>
@@ -135,12 +174,12 @@ export default function ProductFilters({
               id="filter-sort"
               value={filters.sort || 'newest'}
               onChange={handleSortChange}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+              className="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2 text-xs font-medium text-gray-900 transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
             >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="price_asc">Price: Low to High</option>
-              <option value="price_desc">Price: High to Low</option>
+              <option value="newest">Featured &bull; Newest First</option>
+              <option value="oldest">Date &bull; Oldest First</option>
+              <option value="price_asc">Price &bull; Low to High</option>
+              <option value="price_desc">Price &bull; High to Low</option>
             </select>
           </div>
         </div>
@@ -154,7 +193,7 @@ export default function ProductFilters({
             <div className="flex flex-col gap-1 w-24">
               <label
                 htmlFor="filter-min-price"
-                className="text-xs font-semibold text-gray-700 dark:text-gray-300"
+                className="text-xs font-bold text-gray-700 dark:text-gray-300"
               >
                 Min (₹)
               </label>
@@ -166,16 +205,16 @@ export default function ProductFilters({
                 placeholder="0"
                 value={minPriceInput}
                 onChange={(e) => setMinPriceInput(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
               />
             </div>
 
-            <span className="self-end pb-2 text-gray-400 dark:text-gray-500">-</span>
+            <span className="self-end pb-2.5 text-gray-400 dark:text-gray-500 font-semibold">-</span>
 
             <div className="flex flex-col gap-1 w-24">
               <label
                 htmlFor="filter-max-price"
-                className="text-xs font-semibold text-gray-700 dark:text-gray-300"
+                className="text-xs font-bold text-gray-700 dark:text-gray-300"
               >
                 Max (₹)
               </label>
@@ -184,16 +223,16 @@ export default function ProductFilters({
                 type="number"
                 min="0"
                 step="any"
-                placeholder="₹"
+                placeholder="₹ max"
                 value={maxPriceInput}
                 onChange={(e) => setMaxPriceInput(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
+                className="w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
               />
             </div>
 
             <button
               type="submit"
-              className="mt-auto rounded-lg bg-gray-900 px-3 py-2 text-xs font-semibold text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600"
+              className="mt-auto min-h-[38px] rounded-xl bg-gray-900 px-4 py-2 text-xs font-bold text-white transition hover:bg-gray-800 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600"
             >
               Apply
             </button>
@@ -204,7 +243,7 @@ export default function ProductFilters({
             <button
               type="button"
               onClick={onReset}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-100 focus:outline-none dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+              className="min-h-[38px] rounded-xl border border-gray-300 px-3.5 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
             >
               Reset Filters
             </button>
@@ -213,16 +252,24 @@ export default function ProductFilters({
       </div>
 
       {priceError && (
-        <div className="mt-2 text-xs font-medium text-red-600 dark:text-red-400">
+        <div className="mt-3 rounded-lg bg-red-50 p-2 text-xs font-medium text-red-600 dark:bg-red-950/40 dark:text-red-400">
           {priceError}
         </div>
       )}
 
       {/* Item count readout */}
       {totalProducts !== undefined && (
-        <div className="mt-3 border-t border-gray-100 pt-3 text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400">
-          Showing <span className="font-semibold text-gray-900 dark:text-gray-200">{totalProducts}</span>{' '}
-          {totalProducts === 1 ? 'product' : 'products'}
+        <div className="mt-4 border-t border-gray-100 pt-3 flex items-center justify-between text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400">
+          <div>
+            Showing <span className="font-bold text-gray-900 dark:text-gray-100">{totalProducts}</span>{' '}
+            {totalProducts === 1 ? 'item' : 'items'} in catalogue
+          </div>
+          {hasActiveFilters && (
+            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-indigo-600 dark:text-indigo-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-indigo-600 dark:bg-indigo-400" />
+              Filters active
+            </span>
+          )}
         </div>
       )}
     </div>
