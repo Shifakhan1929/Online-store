@@ -1,14 +1,58 @@
-# Mini Online Store
+## Mini Online Store
 
-A robust full-stack e-commerce application featuring customer authentication, product catalogue with server-side filters and sorting, dynamic shopping cart with real-time navbar count badge, transactional checkout with coupon validation and concurrency-safe stock deduction, customer order history with immutable historical snapshots, and a role-protected administrative management portal.
+A robust full-stack e-commerce application featuring customer authentication, a product catalogue with server-side filtering and sorting, a dynamic shopping cart with a real-time navbar count badge, transactional checkout with coupon validation and concurrency-safe stock deduction, customer order history with immutable historical snapshots, and a role-protected administrative management portal.
 
----
+## Live Demo
+
+* **Frontend:** https://online-store-psi-henna.vercel.app
+* **Products Page:** https://online-store-psi-henna.vercel.app/products
+* **Backend API:** https://mini-online-store-api.onrender.com
+
+## Deployment Architecture
+
+| Component | Technology                            | Hosting |
+| --------- | ------------------------------------- | ------- |
+| Frontend  | React, TypeScript, Vite, Tailwind CSS | Vercel  |
+| Backend   | Node.js, Express.js, TypeScript       | Render  |
+| Database  | PostgreSQL                            | Neon    |
+
+## Tech Stack
+
+**Frontend**
+
+* React 19
+* TypeScript
+* Vite 8
+* Tailwind CSS v4
+* React Router 7
+* Centralized Fetch API client
+
+**Backend**
+
+* Node.js
+* Express.js
+* TypeScript
+* Prisma 7 with `@prisma/adapter-pg`
+* JWT authentication
+* bcryptjs
+* Zod validation
+* Vitest
+
+**Database & Deployment**
+
+* PostgreSQL
+* Prisma ORM
+* Vercel
+* Render
+* Neon
 
 ## Architecture Overview
 
-- **Backend**: Node.js, Express, TypeScript, Prisma 7 with PostgreSQL adapter (`@prisma/adapter-pg`), bcryptjs, jsonwebtoken, Zod validation, and Vitest.
-- **Frontend**: React 19, TypeScript, Vite 8, Tailwind CSS v4, React Router 7, and centralized Fetch API client.
-- **Monetary Unit Convention**: All monetary amounts are stored in the database and processed across internal APIs as **integer paise** (₹1.00 = 100 paise) to prevent floating-point inaccuracies. Price filters and admin product inputs accept rupees and are converted by the backend.
+* **Backend:** A REST API built with Node.js, Express, and TypeScript. Prisma manages database access through the PostgreSQL adapter. Authentication, request validation, and automated tests are implemented using JWT, Zod, and Vitest.
+* **Frontend:** A React application built with TypeScript and Vite, styled using Tailwind CSS v4, with React Router for navigation and a centralized Fetch API client for backend communication.
+* **Database:** PostgreSQL stores users, products, categories, carts, orders, and related application data.
+* **Monetary Unit Convention:** All monetary amounts are stored in the database and processed across internal APIs as **integer paise** (₹1.00 = 100 paise) to prevent floating-point inaccuracies. Price filters and admin product inputs accept rupees and are converted by the backend.
+
 
 ---
 
